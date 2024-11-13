@@ -49,4 +49,4 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh pr create -B master -H dev --title 'Release to master' --body 'Created by Github Action'
+        run: gh pr create -B prod/io -H dev --title 'Release to prod/io' --body 'Created by Github Action'
