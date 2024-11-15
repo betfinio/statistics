@@ -16,7 +16,7 @@ export default defineConfig({
 		assetPrefix: 'http://localhost:4000',
 	},
 	html: {
-		title: 'BetFin Template',
+		title: 'BetFin Statistics',
 		favicon: './src/assets/favicon.svg',
 	},
 	output: {
@@ -25,13 +25,14 @@ export default defineConfig({
 	plugins: [pluginReact()],
 	tools: {
 		rspack: {
+			ignoreWarnings: [/Critical dependency: the request of a dependency is an expression/],
 			output: {
-				uniqueName: 'betfinio_template',
+				uniqueName: 'betfinio_statistics',
 			},
 			plugins: [
 				TanStackRouterRspack(),
 				new ModuleFederationPlugin({
-					name: 'betfinio_template',
+					name: 'betfinio_statistics',
 					remotes: {
 						betfinio_app: getApp(),
 					},
