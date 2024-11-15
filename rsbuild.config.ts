@@ -10,10 +10,10 @@ const getApp = () => {
 
 export default defineConfig({
 	server: {
-		port: 4000,
+		port: 4006,
 	},
 	dev: {
-		assetPrefix: 'http://localhost:4000',
+		assetPrefix: 'http://localhost:4006',
 	},
 	html: {
 		title: 'BetFin Statistics',
@@ -33,6 +33,9 @@ export default defineConfig({
 				TanStackRouterRspack(),
 				new ModuleFederationPlugin({
 					name: 'betfinio_statistics',
+					exposes: {
+						'./query': './src/lib/query/statistics/index.ts',
+					},
 					remotes: {
 						betfinio_app: getApp(),
 					},

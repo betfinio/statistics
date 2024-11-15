@@ -2,9 +2,6 @@ import {
 	GetStakingStatsDocument,
 	type GetStakingStatsQuery,
 	type GetTotalConservativeDistributionsQuery,
-	type GetTotalConservativeDistributionsQueryVariables,
-	type GetTotalDynamicDistributionsQuery,
-	type GetTotalDynamicDistributionsQueryVariables,
 	GetTotalPlayersDocument,
 	type GetTotalPlayersQuery,
 	GetTradingVolumeDocument,
@@ -14,8 +11,8 @@ import {
 import logger from '@/src/config/logger';
 import { valueToNumber } from '@betfinio/abi';
 import type { ExecutionResult } from 'graphql/execution';
-import { Address } from 'viem';
 import type { Timeframe } from '../../types';
+
 export const fetchStatisticsTotalStaking = async (timeSeriesType: Timeframe) => {
 	logger.start('[statistics]', 'fetching stakes statistics');
 	const data: ExecutionResult<GetStakingStatsQuery> = await execute(GetStakingStatsDocument, { timeSeriesType, first: 20 });
