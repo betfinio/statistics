@@ -10,13 +10,13 @@ const getApp = () => {
 
 export default defineConfig({
 	server: {
-		port: 4000,
+		port: 4006,
 	},
 	dev: {
-		assetPrefix: 'http://localhost:4000',
+		assetPrefix: 'http://localhost:4006',
 	},
 	html: {
-		title: 'BetFin Template',
+		title: 'BetFin Statistics',
 		favicon: './src/assets/favicon.svg',
 	},
 	output: {
@@ -25,13 +25,17 @@ export default defineConfig({
 	plugins: [pluginReact()],
 	tools: {
 		rspack: {
+			ignoreWarnings: [/Critical dependency: the request of a dependency is an expression/],
 			output: {
-				uniqueName: 'betfinio_template',
+				uniqueName: 'betfinio_statistics',
 			},
 			plugins: [
 				TanStackRouterRspack(),
 				new ModuleFederationPlugin({
-					name: 'betfinio_template',
+					name: 'betfinio_statistics',
+					exposes: {
+						'./query': './src/lib/query/statistics/index.ts',
+					},
 					remotes: {
 						betfinio_app: getApp(),
 					},

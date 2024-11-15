@@ -18,3 +18,8 @@ bun.lockb
 
 
 .npmrc
+
+
+
+.graphclient
+src/gql

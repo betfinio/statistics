@@ -4,24 +4,27 @@ import * as i18 from 'i18next';
 import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
 import ICU from 'i18next-icu';
 import { initReactI18next } from 'react-i18next';
-import czJSON from './translations/cz.json';
-import enJSON from './translations/en.json';
-import ruJSON from './translations/ru.json';
-
+import czStatistic from './translations/cz/staking.json';
+import enStatistic from './translations/en/staking.json';
+import ruStatistic from './translations/ru/staking.json';
 export const defaultNS = 'template';
 
 export const resources = {
 	en: {
-		template: enJSON,
+		staking: enStatistic,
 		shared: sharedLang.en,
 	},
-	cz: {
-		template: czJSON,
+	ru: {
+		staking: ruStatistic,
+		shared: sharedLang.ru,
+	},
+	cs: {
+		staking: czStatistic,
 		shared: sharedLang.cz,
 	},
-	ru: {
-		template: ruJSON,
-		shared: sharedLang.ru,
+	cz: {
+		staking: czStatistic,
+		shared: sharedLang.cz,
 	},
 } as const;
 
@@ -31,8 +34,12 @@ instance
 	.use(I18nextBrowserLanguageDetector)
 	.use(ICU)
 	.init({
-		resources: resources,
-		lng: 'en', // default language
+		resources,
+		detection: {
+			order: ['localStorage', 'navigator'],
+			convertDetectedLanguage: (lng) => lng.split('-')[0],
+		},
+		supportedLngs: ['en', 'ru', 'cs'],
 		fallbackLng: 'en',
 		defaultNS,
 		interpolation: { escapeValue: false },
