@@ -4,7 +4,7 @@ import * as i18 from 'i18next';
 import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
 import ICU from 'i18next-icu';
 import { initReactI18next } from 'react-i18next';
-import czStatistic from './translations/cz/staking.json';
+import csStatistic from './translations/cs/staking.json';
 import enStatistic from './translations/en/staking.json';
 import ruStatistic from './translations/ru/staking.json';
 export const defaultNS = 'template';
@@ -19,11 +19,7 @@ export const resources = {
 		shared: sharedLang.ru,
 	},
 	cs: {
-		staking: czStatistic,
-		shared: sharedLang.cz,
-	},
-	cz: {
-		staking: czStatistic,
+		staking: csStatistic,
 		shared: sharedLang.cz,
 	},
 } as const;
