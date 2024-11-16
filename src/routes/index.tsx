@@ -39,7 +39,7 @@ function StatisticsPage() {
 
 			<div className={'grid grid-cols-1 gap-2 md:gap-3 lg:gap-4'}>
 				<Tabs value={payoutsTab}>
-					<TabsList className={'sm:flex flex-col sm:flex-row gap-2 text-sm  w-full'}>
+					<TabsList className={'md:flex flex-row gap-2 text-sm hidden'}>
 						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('dynamicPayouts')} value={'dynamicPayouts'}>
 							{t('statistics.dynamicStakingPayouts')}
 						</TabsTrigger>
@@ -48,6 +48,19 @@ function StatisticsPage() {
 						</TabsTrigger>
 						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('revenues')} value={'revenues'}>
 							{t('statistics.totalRevenues')}
+						</TabsTrigger>
+					</TabsList>
+
+					<div className="md:hidden text-lg ">{t('statistics.revenues')}</div>
+					<TabsList className={'flex md:hidden'}>
+						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('dynamicPayouts')} value={'dynamicPayouts'}>
+							{t('statistics.dynamic')}
+						</TabsTrigger>
+						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('conservativePayouts')} value={'conservativePayouts'}>
+							{t('statistics.conservative')}
+						</TabsTrigger>
+						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('revenues')} value={'revenues'}>
+							{t('statistics.total')}
 						</TabsTrigger>
 					</TabsList>
 
