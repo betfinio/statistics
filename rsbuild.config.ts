@@ -35,6 +35,7 @@ export default defineConfig({
 					name: 'betfinio_statistics',
 					exposes: {
 						'./query': './src/lib/query/statistics/index.ts',
+						'./utils': './src/utils/index.ts',
 					},
 					remotes: {
 						betfinio_app: getApp(),

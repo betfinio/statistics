@@ -17,12 +17,12 @@ import {
 	fetchTotalPlayers,
 	fetchTradingVolume,
 } from '../../gql/statistics';
-import type { Timeframe } from '../../types';
+import type { StakingType, Timeframe } from '../../types';
 
-export const useStakingStatistics = (time: Timeframe) => {
+export const useStakingStatistics = (timeSeriesType: Timeframe, stakingType?: StakingType, startFrom?: number) => {
 	return useQuery({
-		queryKey: ['statistics', 'total', time],
-		queryFn: () => fetchStatisticsTotalStaking(time),
+		queryKey: ['statistics', 'total', timeSeriesType, stakingType ?? 0],
+		queryFn: () => fetchStatisticsTotalStaking({ timeSeriesType, stakingType, startFrom }),
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 	});

@@ -19,6 +19,25 @@ query GetStakingStats($timeSeriesType: String!, $first: Int) {
     conservativeTotalRevenues
   }
 }
+query GetStakingStatsCycle($timeSeriesType: String!, $first: Int,$fromTime:BigInt!) {
+  totalStakingStatistics_collection(
+    where: { timeSeriesType: $timeSeriesType , timestamp_gte:$fromTime}
+    first: $first
+    orderBy: timestamp
+    orderDirection: desc
+   
+  ) {
+    conservativeTotalStaking
+    dynamicTotalStaking
+    id
+    timeSeriesType
+    timestamp
+    dynamicTotalStakers
+    conservativeTotalStakers
+    dynamicTotalRevenues
+    conservativeTotalRevenues
+  }
+}
 query GetTotalPlayers {
   statistics_collection {
     totalPlayers
