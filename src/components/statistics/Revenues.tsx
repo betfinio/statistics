@@ -25,7 +25,7 @@ const Revenues = () => {
 			};
 		});
 
-		calculated.push({ x: currentStatistic.timestamp, y: currentStatistic.conservativeTotalrevenue });
+		calculated.push({ x: currentStatistic.timestamp, y: currentStatistic.conservativeTotalRevenue });
 		return calculated;
 	}, [statistics, currentStatistic]);
 

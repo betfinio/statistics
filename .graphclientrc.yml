@@ -3,8 +3,8 @@ sources:
     handler:
       graphql:
         endpoint: ${PUBLIC_STATISTICS_GRAPH_URL}
- 
-  - name: bets-memmory
+
+  - name: bets-memory
     handler:
       graphql:
         endpoint: ${PUBLIC_BETS_MEMORY_GRAPH_URL}

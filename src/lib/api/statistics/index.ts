@@ -1,175 +1,199 @@
+import {
+	AFFILIATE_FUND_ADDRESS,
+	AFFILIATE_INITIAL_SUPPLY,
+	BONUS_POOL_ADDRESS,
+	CONSERVATIVE_STAKING_ADDRESS,
+	DYNAMIC_STAKING_ADDRESS,
+	LIQUIDITY_POOL_ADDRESS,
+	PARTNERS_POOL_ADDRESS,
+	PASS_ADDRESS,
+	TEAM_POOL_ADDRESS,
+	TOKEN_ADDRESS,
+	TOKEN_INITIAL_SUPPLY,
+	USDT_TOKEN_ADDRESS,
+} from '@/src/globals.ts';
+import type { TotalRevenueStatistics, TotalStakersStatistics, TotalStakingStatistics } from '@/src/lib/types.ts';
 import { ConservativeStakingContract, DynamicStakingContract, PassContract, TokenContract, valueToNumber } from '@betfinio/abi';
 import { multicall, readContract } from '@wagmi/core';
 import type { Address } from 'viem';
 import type { Config } from 'wagmi';
 
-export const fetchStakedStatisticsTotalCurrent = async (config: Config) => {
+export const defaultTotalRevenueStatistics: TotalRevenueStatistics = {
+	conservativeTotalRevenue: 0,
+	dynamicTotalRevenue: 0,
+	timestamp: 0,
+	sum: 0,
+};
+
+export const defaultTotalStakersStatistics: TotalStakersStatistics = {
+	conservativeTotalStakers: 0,
+	dynamicTotalStakers: 0,
+	timestamp: 0,
+	sum: 0,
+};
+
+export const defaultTotalStakingStatistics: TotalStakingStatistics = {
+	conservativeTotalStaking: 0,
+	dynamicTotalStaking: 0,
+	timestamp: 0,
+	sum: 0,
+};
+
+export const fetchStakedStatisticsTotalCurrent = async (config: Config): Promise<TotalStakingStatistics> => {
 	const result = await multicall(config, {
 		contracts: [
 			{
 				abi: DynamicStakingContract.abi,
-				address: import.meta.env.PUBLIC_DYNAMIC_STAKING_ADDRESS as Address,
+				address: DYNAMIC_STAKING_ADDRESS as Address,
 				functionName: 'totalStaked',
 			},
 			{
 				abi: ConservativeStakingContract.abi,
-				address: import.meta.env.PUBLIC_CONSERVATIVE_STAKING_ADDRESS as Address,
+				address: CONSERVATIVE_STAKING_ADDRESS as Address,
 				functionName: 'totalStaked',
 			},
 		],
 	});
 
 	if (!result) {
-		return {
-			conservativeTotalStaking: 0,
-			dynamicTotalStaking: 0,
-			timestamp: 0,
-			sum: 0,
-		};
+		return defaultTotalStakingStatistics;
 	}
 
-	const data = result.reduce(
-		(acc, item, index) => {
-			if (index === 1) {
-				acc.conservativeTotalStaking = valueToNumber(item.result as bigint);
-				acc.sum = (acc.sum ?? 0) + acc.conservativeTotalStaking;
-			}
-			if (index === 0) {
-				acc.dynamicTotalStaking = valueToNumber(item.result as bigint);
-				acc.sum = (acc.sum ?? 0) + acc.dynamicTotalStaking;
-			}
-			acc.timestamp = new Date().getTime() / 1000;
+	return result.reduce((acc, item, index) => {
+		if (index === 1) {
+			acc.conservativeTotalStaking = valueToNumber(item.result as bigint);
+			acc.sum = (acc.sum ?? 0) + acc.conservativeTotalStaking;
+		}
+		if (index === 0) {
+			acc.dynamicTotalStaking = valueToNumber(item.result as bigint);
+			acc.sum = (acc.sum ?? 0) + acc.dynamicTotalStaking;
+		}
+		acc.timestamp = new Date().getTime() / 1000;
 
-			return acc;
-		},
-		{} as { conservativeTotalStaking: number; dynamicTotalStaking: number; timestamp: number; sum: number },
-	);
-
-	return data;
+		return acc;
+	}, defaultTotalStakingStatistics);
 };
-export const fetchStakerStatisticsTotalCurrent = async (config: Config) => {
+export const fetchStakerStatisticsTotalCurrent = async (config: Config): Promise<TotalStakersStatistics> => {
 	const result = await multicall(config, {
 		contracts: [
 			{
 				abi: DynamicStakingContract.abi,
-				address: import.meta.env.PUBLIC_DYNAMIC_STAKING_ADDRESS as Address,
+				address: DYNAMIC_STAKING_ADDRESS as Address,
 				functionName: 'totalStakers',
 			},
 			{
 				abi: ConservativeStakingContract.abi,
-				address: import.meta.env.PUBLIC_CONSERVATIVE_STAKING_ADDRESS as Address,
+				address: CONSERVATIVE_STAKING_ADDRESS as Address,
 				functionName: 'totalStakers',
 			},
 		],
 	});
 
 	if (!result) {
-		return {
-			conservativeTotalStaking: 0,
-			dynamicTotalStaking: 0,
-			timestamp: 0,
-			sum: 0,
-		};
+		return defaultTotalStakersStatistics;
 	}
 
-	const data = result.reduce(
-		(acc, item, index) => {
-			if (index === 1) {
-				acc.conservativeTotalStakers = Number(item.result);
-				acc.sum = (acc.sum ?? 0) + acc.conservativeTotalStakers;
-			}
-			if (index === 0) {
-				acc.dynamicTotalStakers = Number(item.result);
-				acc.sum = (acc.sum ?? 0) + acc.dynamicTotalStakers;
-			}
-			acc.timestamp = Math.floor(new Date().getTime() / 1000);
+	return result.reduce((acc, item, index) => {
+		if (index === 1) {
+			acc.conservativeTotalStakers = Number(item.result);
+			acc.sum = (acc.sum ?? 0) + acc.conservativeTotalStakers;
+		}
+		if (index === 0) {
+			acc.dynamicTotalStakers = Number(item.result);
+			acc.sum = (acc.sum ?? 0) + acc.dynamicTotalStakers;
+		}
+		acc.timestamp = Math.floor(new Date().getTime() / 1000);
 
-			return acc;
-		},
-		{} as { conservativeTotalStakers: number; dynamicTotalStakers: number; timestamp: number; sum: number },
-	);
-
-	return data;
+		return acc;
+	}, defaultTotalStakersStatistics);
 };
-export const fetchRevenueStatisticsTotalCurrent = async (config: Config) => {
-	const result = await multicall(config, {
+export const fetchRevenueStatisticsTotalCurrent = async (config: Config): Promise<TotalRevenueStatistics> => {
+	const conservativeResults = await multicall(config, {
 		contracts: [
 			{
-				abi: DynamicStakingContract.abi,
-				address: import.meta.env.PUBLIC_DYNAMIC_STAKING_ADDRESS as Address,
+				abi: ConservativeStakingContract.abi,
+				address: CONSERVATIVE_STAKING_ADDRESS as Address,
 				functionName: 'totalProfit',
 			},
 			{
-				abi: ConservativeStakingContract.abi,
-				address: import.meta.env.PUBLIC_CONSERVATIVE_STAKING_ADDRESS as Address,
+				abi: TokenContract.abi,
+				address: TOKEN_ADDRESS,
+				functionName: 'balanceOf',
+				args: [CONSERVATIVE_STAKING_ADDRESS],
+			},
+		],
+	});
+	const dynamicResults = await multicall(config, {
+		contracts: [
+			{
+				abi: DynamicStakingContract.abi,
+				address: DYNAMIC_STAKING_ADDRESS as Address,
 				functionName: 'totalProfit',
+			},
+			{
+				abi: TokenContract.abi,
+				address: TOKEN_ADDRESS,
+				functionName: 'balanceOf',
+				args: [DYNAMIC_STAKING_ADDRESS],
+			},
+			{
+				abi: DynamicStakingContract.abi,
+				address: DYNAMIC_STAKING_ADDRESS,
+				functionName: 'realStaked',
 			},
 		],
 	});
 
-	if (!result) {
-		return;
-	}
-
-	const data = result.reduce(
-		(acc, item, index) => {
-			if (index === 1) {
-				acc.conservativeTotalrevenue = valueToNumber(item.result as bigint);
-				acc.sum = (acc.sum ?? 0) + acc.conservativeTotalrevenue;
-			}
-			if (index === 0) {
-				acc.dynamicTotalRevenue = valueToNumber(item.result as bigint);
-				acc.sum = (acc.sum ?? 0) + acc.dynamicTotalRevenue;
-			}
-			acc.timestamp = Math.floor(new Date().getTime() / 1000);
-
-			return acc;
-		},
-		{} as { conservativeTotalrevenue: number; dynamicTotalRevenue: number; timestamp: number; sum: number },
-	);
-
-	return data;
+	const conservativeTotalRevenue = valueToNumber(conservativeResults[0].result as bigint) - valueToNumber(conservativeResults[1].result as bigint);
+	const dynamicTotalRevenue =
+		valueToNumber(dynamicResults[0].result as bigint) + valueToNumber(dynamicResults[1].result as bigint) - valueToNumber(dynamicResults[2].result as bigint);
+	if (!conservativeTotalRevenue || !dynamicTotalRevenue) return defaultTotalRevenueStatistics;
+	return {
+		conservativeTotalRevenue: conservativeTotalRevenue,
+		dynamicTotalRevenue,
+		timestamp: Math.floor(new Date().getTime() / 1000),
+		sum: conservativeTotalRevenue + dynamicTotalRevenue,
+	};
 };
-export const fetchTotalMembers = async (config: Config) => {
+export const fetchTotalMembers = async (config: Config): Promise<number> => {
 	const result = await readContract(config, {
 		abi: PassContract.abi,
-		address: import.meta.env.PUBLIC_PASS_ADDRESS as Address,
+		address: PASS_ADDRESS as Address,
 		functionName: 'getMembersCount',
 	});
 
 	if (!result) {
-		return;
+		return 0;
 	}
 	return Number(result);
 };
-export const fetchTotalAffiliatePaid = async (config: Config) => {
+export const fetchTotalAffiliatePaid = async (config: Config): Promise<bigint> => {
 	const result = (await readContract(config, {
 		abi: TokenContract.abi,
-		address: import.meta.env.PUBLIC_TOKEN_ADDRESS as Address,
+		address: TOKEN_ADDRESS as Address,
 		functionName: 'balanceOf',
-		args: [import.meta.env.PUBLIC_AFFILIATE_FUND_ADDRESS as Address],
+		args: [AFFILIATE_FUND_ADDRESS as Address],
 	})) as bigint;
 
 	if (!result) {
-		return;
+		return 0n;
 	}
-	return 381111111111n * 10n ** 18n - result;
+	return AFFILIATE_INITIAL_SUPPLY - result;
 };
 
 export const fetchLiquidityInPool = async (config: Config) => {
 	const betResult = (await readContract(config, {
 		abi: TokenContract.abi,
-		address: import.meta.env.PUBLIC_TOKEN_ADDRESS as Address,
+		address: TOKEN_ADDRESS as Address,
 		functionName: 'balanceOf',
-		args: [import.meta.env.PUBLIC_LIQUIDITY_POOL_ADDRESS as Address],
+		args: [LIQUIDITY_POOL_ADDRESS as Address],
 	})) as bigint;
 	const usdtResult = (await readContract(config, {
 		abi: TokenContract.abi,
-		address: import.meta.env.PUBLIC_USDT_TOKEN_ADDRESS as Address,
+		address: USDT_TOKEN_ADDRESS as Address,
 		functionName: 'balanceOf',
-		args: [import.meta.env.PUBLIC_LIQUIDITY_POOL_ADDRESS as Address],
+		args: [LIQUIDITY_POOL_ADDRESS as Address],
 	})) as bigint;
-	console.log(usdtResult, 'usdtResult');
 	if (!betResult || !betResult) {
 		return { betResult: 0n, usdtResult: 0n };
 	}
@@ -178,34 +202,36 @@ export const fetchLiquidityInPool = async (config: Config) => {
 };
 
 export const fetchCurrentDistribution = async (config: Config): Promise<number[]> => {
-	const promises = [
-		readContract(config, {
-			abi: TokenContract.abi,
-			address: import.meta.env.PUBLIC_TOKEN_ADDRESS as Address,
-			functionName: 'balanceOf',
-			args: [import.meta.env.PUBLIC_BONUS_POOL_ADDRESS as Address],
-		}) as Promise<bigint>,
-		readContract(config, {
-			abi: TokenContract.abi,
-			address: import.meta.env.PUBLIC_TOKEN_ADDRESS as Address,
-			functionName: 'balanceOf',
-			args: [import.meta.env.PUBLIC_PARTNERS_POOL_ADDRESS as Address],
-		}) as Promise<bigint>,
-		readContract(config, {
-			abi: TokenContract.abi,
-			address: import.meta.env.PUBLIC_TOKEN_ADDRESS as Address,
-			functionName: 'balanceOf',
-			args: [import.meta.env.PUBLIC_TEAM_POOL_ADDRESS as Address],
-		}) as Promise<bigint>,
-		readContract(config, {
-			abi: TokenContract.abi,
-			address: import.meta.env.PUBLIC_TOKEN_ADDRESS as Address,
-			functionName: 'balanceOf',
-			args: [import.meta.env.PUBLIC_AFFILIATE_FUND_ADDRESS as Address],
-		}) as Promise<bigint>,
-	];
+	const data = await multicall(config, {
+		contracts: [
+			{
+				abi: TokenContract.abi,
+				address: TOKEN_ADDRESS as Address,
+				functionName: 'balanceOf',
+				args: [BONUS_POOL_ADDRESS as Address],
+			},
+			{
+				abi: TokenContract.abi,
+				address: TOKEN_ADDRESS as Address,
+				functionName: 'balanceOf',
+				args: [PARTNERS_POOL_ADDRESS as Address],
+			},
+			{
+				abi: TokenContract.abi,
+				address: TOKEN_ADDRESS as Address,
+				functionName: 'balanceOf',
+				args: [TEAM_POOL_ADDRESS as Address],
+			},
+			{
+				abi: TokenContract.abi,
+				address: TOKEN_ADDRESS as Address,
+				functionName: 'balanceOf',
+				args: [AFFILIATE_FUND_ADDRESS as Address],
+			},
+		],
+	});
 
-	const [bonusPool, partnersPool, teamPool, affiliatePool] = await Promise.all(promises);
+	const [bonusPool, partnersPool, teamPool, affiliatePool]: bigint[] = data.map((item) => item.result as bigint);
 
 	const stakedData = await fetchStakedStatisticsTotalCurrent(config);
 	const liquidityData = await fetchLiquidityInPool(config);
@@ -216,7 +242,7 @@ export const fetchCurrentDistribution = async (config: Config): Promise<number[]
 	const formattedData = [bonusPool, BigInt(staked) * 10n ** 18n, lockedLiquidity, teamPool, affiliatePool, partnersPool];
 	const formattedDataSum = formattedData.reduce((acc, item) => acc + item, 0n);
 
-	const freeBetTokens = 777777777777n * 10n ** 18n - formattedDataSum;
+	const freeBetTokens = TOKEN_INITIAL_SUPPLY - formattedDataSum;
 	formattedData.splice(1, 0, freeBetTokens);
 
 	return formattedData.map((value) => valueToNumber(value));
