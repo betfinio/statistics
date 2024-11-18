@@ -15,7 +15,6 @@ import { TradingVolumeCard } from '@/src/components/statistics/SmallCards/Tradin
 import Staked from '@/src/components/statistics/Staked';
 import Stakers from '@/src/components/statistics/Stakers';
 import { createFileRoute } from '@tanstack/react-router';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'betfinio_app/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'betfinio_app/tabs';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,27 +39,30 @@ function StatisticsPage() {
 			<div className={'grid grid-cols-1 gap-2 md:gap-3 lg:gap-4'}>
 				<Tabs value={payoutsTab}>
 					<TabsList className={'md:flex flex-row gap-2 text-sm hidden'}>
-						<TabsTrigger onClick={() => setPayoutsTab('dynamicPayouts')} value={'dynamicPayouts'}>
+						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('dynamicPayouts')} value={'dynamicPayouts'}>
 							{t('statistics.dynamicStakingPayouts')}
 						</TabsTrigger>
-						<TabsTrigger onClick={() => setPayoutsTab('conservativePayouts')} value={'conservativePayouts'}>
+						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('conservativePayouts')} value={'conservativePayouts'}>
 							{t('statistics.conservativeStakingPayouts')}
 						</TabsTrigger>
-						<TabsTrigger onClick={() => setPayoutsTab('revenues')} value={'revenues'}>
+						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('revenues')} value={'revenues'}>
 							{t('statistics.totalRevenues')}
 						</TabsTrigger>
 					</TabsList>
 
-					<Select value={payoutsTab} onValueChange={setPayoutsTab}>
-						<SelectTrigger className={'min-w-[100px] md:hidden'}>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="dynamicPayouts"> {t('statistics.dynamicStakingPayouts')}</SelectItem>
-							<SelectItem value="conservativePayouts"> {t('statistics.conservativeStakingPayouts')}</SelectItem>
-							<SelectItem value="revenues"> {t('statistics.totalRevenues')}</SelectItem>
-						</SelectContent>
-					</Select>
+					<div className="md:hidden text-lg ">{t('statistics.revenues')}</div>
+					<TabsList className={'flex md:hidden'}>
+						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('dynamicPayouts')} value={'dynamicPayouts'}>
+							{t('statistics.dynamic')}
+						</TabsTrigger>
+						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('conservativePayouts')} value={'conservativePayouts'}>
+							{t('statistics.conservative')}
+						</TabsTrigger>
+						<TabsTrigger className="w-full sm:w-auto" onClick={() => setPayoutsTab('revenues')} value={'revenues'}>
+							{t('statistics.total')}
+						</TabsTrigger>
+					</TabsList>
+
 					<TabsContent value={'conservativePayouts'} className={'h-full'}>
 						<ConservativeStakingPayouts />
 					</TabsContent>
