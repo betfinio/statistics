@@ -15,7 +15,6 @@ import { TradingVolumeCard } from '@/src/components/statistics/SmallCards/Tradin
 import Staked from '@/src/components/statistics/Staked';
 import Stakers from '@/src/components/statistics/Stakers';
 import { createFileRoute } from '@tanstack/react-router';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'betfinio_app/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'betfinio_app/tabs';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
