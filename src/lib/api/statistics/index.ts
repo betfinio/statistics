@@ -92,7 +92,22 @@ export const fetchStakerStatisticsTotalCurrent = async (config: Config) => {
 	return data;
 };
 export const fetchRevenueStatisticsTotalCurrent = async (config: Config) => {
-	const result = await multicall(config, {
+	const conservativeResults = await multicall(config, {
+		contracts: [
+			{
+				abi: ConservativeStakingContract.abi,
+				address: import.meta.env.PUBLIC_CONSERVATIVE_STAKING_ADDRESS as Address,
+				functionName: 'totalProfit',
+			},
+			{
+				abi: TokenContract.abi,
+				address: import.meta.env.PUBLIC_TOKEN_ADDRESS as Address,
+				functionName: 'balanceOf',
+				args: [import.meta.env.PUBLIC_CONSERVATIVE_STAKING_ADDRESS],
+			},
+		],
+	});
+	const dynamicResults = await multicall(config, {
 		contracts: [
 			{
 				abi: DynamicStakingContract.abi,
@@ -100,35 +115,32 @@ export const fetchRevenueStatisticsTotalCurrent = async (config: Config) => {
 				functionName: 'totalProfit',
 			},
 			{
-				abi: ConservativeStakingContract.abi,
-				address: import.meta.env.PUBLIC_CONSERVATIVE_STAKING_ADDRESS as Address,
-				functionName: 'totalProfit',
+				abi: TokenContract.abi,
+				address: import.meta.env.PUBLIC_TOKEN_ADDRESS,
+				functionName: 'balanceOf',
+				args: [import.meta.env.PUBLIC_DYNAMIC_STAKING_ADDRESS],
+			},
+			{
+				abi: DynamicStakingContract.abi,
+				address: import.meta.env.PUBLIC_DYNAMIC_STAKING_ADDRESS,
+				functionName: 'realStaked',
 			},
 		],
 	});
 
-	if (!result) {
+	const conservativeTotalrevenue = valueToNumber(conservativeResults[0].result as bigint) - valueToNumber(conservativeResults[1].result as bigint);
+	const dynamicTotalRevenue =
+		valueToNumber(dynamicResults[0].result as bigint) + valueToNumber(dynamicResults[1].result as bigint) - valueToNumber(dynamicResults[2].result as bigint);
+	if (!conservativeTotalrevenue || !dynamicTotalRevenue) {
 		return;
 	}
 
-	const data = result.reduce(
-		(acc, item, index) => {
-			if (index === 1) {
-				acc.conservativeTotalrevenue = valueToNumber(item.result as bigint);
-				acc.sum = (acc.sum ?? 0) + acc.conservativeTotalrevenue;
-			}
-			if (index === 0) {
-				acc.dynamicTotalRevenue = valueToNumber(item.result as bigint);
-				acc.sum = (acc.sum ?? 0) + acc.dynamicTotalRevenue;
-			}
-			acc.timestamp = Math.floor(new Date().getTime() / 1000);
-
-			return acc;
-		},
-		{} as { conservativeTotalrevenue: number; dynamicTotalRevenue: number; timestamp: number; sum: number },
-	);
-
-	return data;
+	return {
+		conservativeTotalrevenue,
+		dynamicTotalRevenue,
+		timestamp: Math.floor(new Date().getTime() / 1000),
+		sum: conservativeTotalrevenue + dynamicTotalRevenue,
+	};
 };
 export const fetchTotalMembers = async (config: Config) => {
 	const result = await readContract(config, {
