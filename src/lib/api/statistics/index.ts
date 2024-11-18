@@ -65,8 +65,8 @@ export const fetchStakerStatisticsTotalCurrent = async (config: Config) => {
 
 	if (!result) {
 		return {
-			conservativeTotalStaking: 0,
-			dynamicTotalStaking: 0,
+			conservativeTotalStakers: 0,
+			dynamicTotalStakers: 0,
 			timestamp: 0,
 			sum: 0,
 		};

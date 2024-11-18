@@ -1,4 +1,6 @@
 import {
+	GetStakingStatsCycleDocument,
+	type GetStakingStatsCycleQuery,
 	GetStakingStatsDocument,
 	type GetStakingStatsQuery,
 	type GetTotalConservativeDistributionsQuery,
@@ -11,11 +13,71 @@ import {
 import logger from '@/src/config/logger';
 import { valueToNumber } from '@betfinio/abi';
 import type { ExecutionResult } from 'graphql/execution';
-import type { Timeframe } from '../../types';
+import type { StakingType, Timeframe } from '../../types';
 
-export const fetchStatisticsTotalStaking = async (timeSeriesType: Timeframe) => {
+export const fetchStatisticsTotalStaking = async ({
+	timeSeriesType,
+	stakingType,
+	first = 20,
+	startFrom,
+}: {
+	timeSeriesType: Timeframe;
+	stakingType?: StakingType;
+	first?: number;
+	startFrom?: number;
+}) => {
+	if (timeSeriesType === 'cycle') {
+		if (stakingType === 'conservative') {
+			const timeSeries = 'hour';
+			const data: ExecutionResult<GetStakingStatsCycleQuery> = await execute(GetStakingStatsCycleDocument, {
+				timeSeriesType: timeSeries,
+				first: 168,
+				fromTime: `${(startFrom ?? 0) / 1000}`,
+			});
+
+			const formattedData = data.data?.totalStakingStatistics_collection.reverse().map((item) => {
+				return {
+					conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
+					dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
+					timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
+					conservativeTotalStakers: +item.conservativeTotalStakers as number,
+					dynamicTotalStakers: +item.dynamicTotalStakers as number,
+					dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
+					conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
+				};
+			});
+
+			if (formattedData && formattedData.length > 42) {
+				return formattedData.filter((_, index) => index % 4 === 0 || index === 0);
+			}
+
+			return formattedData;
+		}
+		if (stakingType === 'dynamic') {
+			const timeSeries = 'day';
+			const data: ExecutionResult<GetStakingStatsQuery> = await execute(GetStakingStatsCycleDocument, {
+				timeSeriesType: timeSeries,
+				first: 30,
+				fromTime: `${(startFrom ?? 0) / 1000}`,
+			});
+
+			const formattedData = data.data?.totalStakingStatistics_collection.reverse().map((item) => {
+				return {
+					conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
+					dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
+					timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
+					conservativeTotalStakers: +item.conservativeTotalStakers as number,
+					dynamicTotalStakers: +item.dynamicTotalStakers as number,
+					dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
+					conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
+				};
+			});
+			return formattedData;
+		}
+	}
+
 	logger.start('[statistics]', 'fetching stakes statistics');
-	const data: ExecutionResult<GetStakingStatsQuery> = await execute(GetStakingStatsDocument, { timeSeriesType, first: 20 });
+	const data: ExecutionResult<GetStakingStatsQuery> = await execute(GetStakingStatsDocument, { timeSeriesType, first });
 
 	const formattedData = data.data?.totalStakingStatistics_collection.reverse().map((item) => {
 		return {
@@ -182,7 +244,6 @@ const mapAndSumResponse = (response: ProfitConservativeDistributionResponse['dat
 
 // Helper function to sum the volumes
 const sumVolumes = (distribution: Array<{ volumeToken0: string }>) => {
-	console.log(distribution, 'distribution');
 	return distribution.reduce((total, { volumeToken0 }) => total + Number(volumeToken0), 0);
 };
 export const fetchTradingVolume = async () => {
