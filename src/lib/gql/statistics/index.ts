@@ -15,6 +15,18 @@ import { valueToNumber } from '@betfinio/abi';
 import type { ExecutionResult } from 'graphql/execution';
 import type { StakingType, Timeframe } from '../../types';
 
+export const mapStakingStatistics = (item: GetStakingStatsCycleQuery['totalStakingStatistics_collection'][number]) => {
+	return {
+		conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
+		dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
+		timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
+		conservativeTotalStakers: +item.conservativeTotalStakers,
+		dynamicTotalStakers: +item.dynamicTotalStakers,
+		dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
+		conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
+	};
+};
+
 export const fetchStatisticsTotalStaking = async ({
 	timeSeriesType,
 	stakingType,
@@ -35,17 +47,7 @@ export const fetchStatisticsTotalStaking = async ({
 				fromTime: `${(startFrom ?? 0) / 1000}`,
 			});
 
-			const formattedData = data.data?.totalStakingStatistics_collection.reverse().map((item) => {
-				return {
-					conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
-					dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
-					timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
-					conservativeTotalStakers: +item.conservativeTotalStakers as number,
-					dynamicTotalStakers: +item.dynamicTotalStakers as number,
-					dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
-					conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
-				};
-			});
+			const formattedData = data.data?.totalStakingStatistics_collection.reverse().map(mapStakingStatistics);
 
 			if (formattedData && formattedData.length > 42) {
 				return formattedData.filter((_, index) => index % 4 === 0 || index === 0);
@@ -61,17 +63,7 @@ export const fetchStatisticsTotalStaking = async ({
 				fromTime: `${(startFrom ?? 0) / 1000}`,
 			});
 
-			const formattedData = data.data?.totalStakingStatistics_collection.reverse().map((item) => {
-				return {
-					conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
-					dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
-					timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
-					conservativeTotalStakers: +item.conservativeTotalStakers as number,
-					dynamicTotalStakers: +item.dynamicTotalStakers as number,
-					dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
-					conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
-				};
-			});
+			const formattedData = data.data?.totalStakingStatistics_collection.reverse().map(mapStakingStatistics);
 			return formattedData;
 		}
 	}
@@ -79,17 +71,7 @@ export const fetchStatisticsTotalStaking = async ({
 	logger.start('[statistics]', 'fetching stakes statistics');
 	const data: ExecutionResult<GetStakingStatsQuery> = await execute(GetStakingStatsDocument, { timeSeriesType, first });
 
-	const formattedData = data.data?.totalStakingStatistics_collection.reverse().map((item) => {
-		return {
-			conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
-			dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
-			timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
-			conservativeTotalStakers: +item.conservativeTotalStakers as number,
-			dynamicTotalStakers: +item.dynamicTotalStakers as number,
-			dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
-			conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
-		};
-	});
+	const formattedData = data.data?.totalStakingStatistics_collection.reverse().map(mapStakingStatistics);
 	logger.success('[statistics]', 'fetching stakes statistics', formattedData);
 
 	return formattedData;
@@ -249,7 +231,7 @@ const sumVolumes = (distribution: Array<{ volumeToken0: string }>) => {
 export const fetchTradingVolume = async () => {
 	const data: ExecutionResult<GetTradingVolumeQuery> = await execute(GetTradingVolumeDocument, {
 		first: 30,
-		pool: '0x549bb7e94da23bc31e5fc4685548587f4f7c9b16',
+		pool: import.meta.env.PUBLIC_TRADING_VOLUMES_POOL_ADDRESS,
 	});
 
 	if (!data?.data?.pool?.poolDayData) {
