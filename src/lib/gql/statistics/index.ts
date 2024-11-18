@@ -11,9 +11,22 @@ import {
 	execute,
 } from '@/.graphclient';
 import logger from '@/src/config/logger';
+import { LIQUIDITY_POOL_ADDRESS } from '@/src/globals.ts';
 import { valueToNumber } from '@betfinio/abi';
 import type { ExecutionResult } from 'graphql/execution';
 import type { StakingType, Timeframe } from '../../types';
+
+export const mapStakingStatistics = (item: GetStakingStatsCycleQuery['totalStakingStatistics_collection'][number]) => {
+	return {
+		conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
+		dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
+		timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
+		conservativeTotalStakers: +item.conservativeTotalStakers,
+		dynamicTotalStakers: +item.dynamicTotalStakers,
+		dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
+		conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
+	};
+};
 
 export const fetchStatisticsTotalStaking = async ({
 	timeSeriesType,
@@ -34,20 +47,13 @@ export const fetchStatisticsTotalStaking = async ({
 				first: 168,
 				fromTime: `${(startFrom ?? 0) / 1000}`,
 			});
+			if (!data.data) {
+				return [];
+			}
 
-			const formattedData = data.data?.totalStakingStatistics_collection.reverse().map((item) => {
-				return {
-					conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
-					dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
-					timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
-					conservativeTotalStakers: +item.conservativeTotalStakers as number,
-					dynamicTotalStakers: +item.dynamicTotalStakers as number,
-					dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
-					conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
-				};
-			});
+			const formattedData = data.data.totalStakingStatistics_collection.reverse().map(mapStakingStatistics);
 
-			if (formattedData && formattedData.length > 42) {
+			if (formattedData.length > 42) {
 				return formattedData.filter((_, index) => index % 4 === 0 || index === 0);
 			}
 
@@ -60,36 +66,17 @@ export const fetchStatisticsTotalStaking = async ({
 				first: 30,
 				fromTime: `${(startFrom ?? 0) / 1000}`,
 			});
-
-			const formattedData = data.data?.totalStakingStatistics_collection.reverse().map((item) => {
-				return {
-					conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
-					dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
-					timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
-					conservativeTotalStakers: +item.conservativeTotalStakers as number,
-					dynamicTotalStakers: +item.dynamicTotalStakers as number,
-					dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
-					conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
-				};
-			});
-			return formattedData;
+			if (!data.data) {
+				return [];
+			}
+			return data.data.totalStakingStatistics_collection.reverse().map(mapStakingStatistics);
 		}
 	}
 
 	logger.start('[statistics]', 'fetching stakes statistics');
 	const data: ExecutionResult<GetStakingStatsQuery> = await execute(GetStakingStatsDocument, { timeSeriesType, first });
 
-	const formattedData = data.data?.totalStakingStatistics_collection.reverse().map((item) => {
-		return {
-			conservativeTotalStaked: valueToNumber(item.conservativeTotalStaking),
-			dynamicTotalStaked: valueToNumber(item.dynamicTotalStaking),
-			timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
-			conservativeTotalStakers: +item.conservativeTotalStakers as number,
-			dynamicTotalStakers: +item.dynamicTotalStakers as number,
-			dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
-			conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
-		};
-	});
+	const formattedData = data.data?.totalStakingStatistics_collection.reverse().map(mapStakingStatistics);
 	logger.success('[statistics]', 'fetching stakes statistics', formattedData);
 
 	return formattedData;
@@ -110,20 +97,18 @@ export interface DateRange {
 
 type ProfitDynamicDistributionResponse = ExecutionResult<Record<`profitDistribution${number}`, GetTotalConservativeDistributionsQuery['profitDistributions']>>;
 export const fetchDynamicStakingTotalDistribution = async (ranges: DateRange[]) => {
-	console.log('[statistics]', 'Fetching staking total distribution series');
+	logger.log('[statistics]', 'Fetching staking total distribution series');
 
 	// Prepare the variables
 	const variables = {} as Record<string, number>;
 
 	// Construct the query string dynamically
 	let query = 'query GetTotalDynamicDistributions(';
-	const rangeVariables: string[] = [];
 
 	// Dynamically add variables and the query for each range
 	ranges.forEach((_, index) => {
 		const rangeIndex = index + 1; // Start from 1 for human-readable aliases
 		query += `$start${rangeIndex}: BigInt!, $end${rangeIndex}: BigInt!, `;
-		rangeVariables.push(`$start${rangeIndex}`, `$end${rangeIndex}`);
 	});
 
 	// Remove trailing comma
@@ -156,30 +141,26 @@ export const fetchDynamicStakingTotalDistribution = async (ranges: DateRange[]) 
 	//Execute the query
 	const data: ProfitDynamicDistributionResponse = await execute(query, variables);
 
-	console.log('[statistics]', 'Fetched staking total distribution series:', data);
+	logger.log('[statistics]', 'Fetched staking total distribution series:', data);
 
-	const formattedData = mapAndSumResponse(data.data, ranges).filter((data) => data.value > 0);
-
-	return formattedData;
+	return mapAndSumResponse(data.data, ranges).filter((data) => data.value > 0);
 };
 type ProfitConservativeDistributionResponse = ExecutionResult<
 	Record<`profitDistribution${number}`, GetTotalConservativeDistributionsQuery['profitDistributions']>
 >;
 export const fetchConservativeStakingTotalDistribution = async (ranges: DateRange[]) => {
-	console.log('[statistics]', 'Fetching staking total distribution series');
+	logger.log('[statistics]', 'Fetching staking total distribution series');
 
 	// Prepare the variables
 	const variables = {} as Record<string, number>;
 
 	// Construct the query string dynamically
 	let query = 'query GetTotalConservativeDistributions(';
-	const rangeVariables: string[] = [];
 
 	// Dynamically add variables and the query for each range
 	ranges.forEach((_, index) => {
 		const rangeIndex = index + 1; // Start from 1 for human-readable aliases
 		query += `$start${rangeIndex}: BigInt!, $end${rangeIndex}: BigInt!, `;
-		rangeVariables.push(`$start${rangeIndex}`, `$end${rangeIndex}`);
 	});
 
 	// Remove trailing comma
@@ -212,7 +193,7 @@ export const fetchConservativeStakingTotalDistribution = async (ranges: DateRang
 	//Execute the query
 	const data: ProfitConservativeDistributionResponse = await execute(query, variables);
 
-	console.log('[statistics]', 'Fetched staking total distribution series:', data);
+	logger.log('[statistics]', 'Fetched staking total distribution series:', data);
 
 	const formattedData = mapAndSumResponse(data.data, ranges);
 	return formattedData.filter((data) => data.value > 0);
@@ -249,14 +230,12 @@ const sumVolumes = (distribution: Array<{ volumeToken0: string }>) => {
 export const fetchTradingVolume = async () => {
 	const data: ExecutionResult<GetTradingVolumeQuery> = await execute(GetTradingVolumeDocument, {
 		first: 30,
-		pool: '0x549bb7e94da23bc31e5fc4685548587f4f7c9b16',
+		pool: LIQUIDITY_POOL_ADDRESS,
 	});
 
 	if (!data?.data?.pool?.poolDayData) {
 		return 0n;
 	}
 
-	const sum = sumVolumes(data.data.pool?.poolDayData);
-
-	return sum;
+	return sumVolumes(data.data.pool?.poolDayData);
 };

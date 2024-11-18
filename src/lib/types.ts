@@ -46,4 +46,23 @@ export interface StakedInfo {
 	transactionHash: Address;
 }
 
+export interface TotalStatistics {
+	timestamp: number;
+	sum: number;
+}
+
+export interface TotalRevenueStatistics extends TotalStatistics {
+	conservativeTotalRevenue: number;
+	dynamicTotalRevenue: number;
+}
+export interface TotalStakersStatistics extends TotalStatistics {
+	conservativeTotalStakers: number;
+	dynamicTotalStakers: number;
+}
+
+export interface TotalStakingStatistics extends TotalStatistics {
+	conservativeTotalStaking: number;
+	dynamicTotalStaking: number;
+}
+
 export type Timeframe = 'hour' | 'day' | 'week' | 'cycle';
