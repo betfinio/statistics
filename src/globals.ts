@@ -11,4 +11,4 @@ export const CONSERVATIVE_STAKING_ADDRESS: Address = import.meta.env.PUBLIC_CONS
 export const DYNAMIC_STAKING_ADDRESS: Address = import.meta.env.PUBLIC_DYNAMIC_STAKING_ADDRESS;
 export const PASS_ADDRESS: Address = import.meta.env.PUBLIC_PASS_ADDRESS;
 export const AFFILIATE_INITIAL_SUPPLY: bigint = 381111111111n * 10n ** 18n;
-export const TOKEN_INITIAL_SUPPLY: bigint = 777777777n * 10n ** 18n;
+export const TOKEN_INITIAL_SUPPLY: bigint = 777777777777n * 10n ** 18n;
