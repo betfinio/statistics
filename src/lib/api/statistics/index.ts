@@ -194,7 +194,6 @@ export const fetchLiquidityInPool = async (config: Config) => {
 		functionName: 'balanceOf',
 		args: [LIQUIDITY_POOL_ADDRESS as Address],
 	})) as bigint;
-	console.log(usdtResult, 'usdtResult');
 	if (!betResult || !betResult) {
 		return { betResult: 0n, usdtResult: 0n };
 	}
