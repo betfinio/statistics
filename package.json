@@ -50,6 +50,7 @@
 		"@commitlint/cli": "^19.5.0",
 		"@commitlint/config-conventional": "^19.5.0",
 		"@graphprotocol/client-cli": "^3.0.7",
+		"@radix-ui/react-select": "^2.1.2",
 		"@radix-ui/react-tabs": "^1.1.1",
 		"@rsbuild/core": "^1.1.1",
 		"@rsbuild/plugin-react": "^1.0.7",
