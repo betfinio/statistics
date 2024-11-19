@@ -230,7 +230,7 @@ const sumVolumes = (distribution: Array<{ volumeToken0: string }>) => {
 export const fetchTradingVolume = async () => {
 	const data: ExecutionResult<GetTradingVolumeQuery> = await execute(GetTradingVolumeDocument, {
 		first: 30,
-		pool: LIQUIDITY_POOL_ADDRESS,
+		pool: LIQUIDITY_POOL_ADDRESS.toLowerCase(),
 	});
 
 	if (!data?.data?.pool?.poolDayData) {
