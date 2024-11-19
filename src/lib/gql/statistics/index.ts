@@ -119,7 +119,7 @@ export const fetchDynamicStakingTotalDistribution = async (ranges: DateRange[]) 
 	ranges.forEach((_, index) => {
 		const rangeIndex = index + 1;
 		query += `
-		profitDistribution${rangeIndex}: profitDistributions(
+		profitDistribution${rangeIndex}: profitDistributionsDynamic(
 		  where: { blockTimestamp_gt: $start${rangeIndex}, blockTimestamp_lt: $end${rangeIndex} }
 		) {
 		  pool
