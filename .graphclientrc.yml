@@ -12,6 +12,15 @@ sources:
     handler:
       graphql:
         endpoint: ${PUBLIC_DYNAMIC_STAKING_GRAPH_URL}
+    transforms:
+      - rename:
+          renames:
+            - from:
+                type: Query
+                field: profitDistributions
+              to:
+                type: Query
+                field: profitDistributionsDynamic
   - name: conservative-staking
     handler:
       graphql:
