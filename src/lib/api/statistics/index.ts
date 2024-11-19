@@ -56,22 +56,25 @@ export const fetchStakedStatisticsTotalCurrent = async (config: Config): Promise
 	});
 
 	if (!result) {
-		return defaultTotalStakingStatistics;
+		return { ...defaultTotalStakingStatistics };
 	}
 
-	return result.reduce((acc, item, index) => {
-		if (index === 1) {
-			acc.conservativeTotalStaking = valueToNumber(item.result as bigint);
-			acc.sum = (acc.sum ?? 0) + acc.conservativeTotalStaking;
-		}
-		if (index === 0) {
-			acc.dynamicTotalStaking = valueToNumber(item.result as bigint);
-			acc.sum = (acc.sum ?? 0) + acc.dynamicTotalStaking;
-		}
-		acc.timestamp = new Date().getTime() / 1000;
+	return result.reduce(
+		(acc, item, index) => {
+			if (index === 1) {
+				acc.conservativeTotalStaking = valueToNumber(item.result as bigint);
+				acc.sum = (acc.sum ?? 0) + acc.conservativeTotalStaking;
+			}
+			if (index === 0) {
+				acc.dynamicTotalStaking = valueToNumber(item.result as bigint);
+				acc.sum = (acc.sum ?? 0) + acc.dynamicTotalStaking;
+			}
+			acc.timestamp = new Date().getTime() / 1000;
 
-		return acc;
-	}, defaultTotalStakingStatistics);
+			return acc;
+		},
+		{ ...defaultTotalStakingStatistics },
+	);
 };
 export const fetchStakerStatisticsTotalCurrent = async (config: Config): Promise<TotalStakersStatistics> => {
 	const result = await multicall(config, {
@@ -90,22 +93,25 @@ export const fetchStakerStatisticsTotalCurrent = async (config: Config): Promise
 	});
 
 	if (!result) {
-		return defaultTotalStakersStatistics;
+		return { ...defaultTotalStakersStatistics };
 	}
 
-	return result.reduce((acc, item, index) => {
-		if (index === 1) {
-			acc.conservativeTotalStakers = Number(item.result);
-			acc.sum = (acc.sum ?? 0) + acc.conservativeTotalStakers;
-		}
-		if (index === 0) {
-			acc.dynamicTotalStakers = Number(item.result);
-			acc.sum = (acc.sum ?? 0) + acc.dynamicTotalStakers;
-		}
-		acc.timestamp = Math.floor(new Date().getTime() / 1000);
+	return result.reduce(
+		(acc, item, index) => {
+			if (index === 1) {
+				acc.conservativeTotalStakers = Number(item.result);
+				acc.sum = (acc.sum ?? 0) + acc.conservativeTotalStakers;
+			}
+			if (index === 0) {
+				acc.dynamicTotalStakers = Number(item.result);
+				acc.sum = (acc.sum ?? 0) + acc.dynamicTotalStakers;
+			}
+			acc.timestamp = Math.floor(new Date().getTime() / 1000);
 
-		return acc;
-	}, defaultTotalStakersStatistics);
+			return acc;
+		},
+		{ ...defaultTotalStakersStatistics },
+	);
 };
 export const fetchRevenueStatisticsTotalCurrent = async (config: Config): Promise<TotalRevenueStatistics> => {
 	const conservativeResults = await multicall(config, {
