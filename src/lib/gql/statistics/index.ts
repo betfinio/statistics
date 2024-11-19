@@ -125,6 +125,7 @@ export const fetchDynamicStakingTotalDistribution = async (ranges: DateRange[]) 
 		  pool
 		  amount
 		  blockNumber
+		  totalStaked
 		}
 	  `;
 	});
@@ -172,11 +173,12 @@ export const fetchConservativeStakingTotalDistribution = async (ranges: DateRang
 		const rangeIndex = index + 1;
 		query += `
 		profitDistribution${rangeIndex}: profitDistributions(
-		  where: { blockTimestamp_gt: $start${rangeIndex}, blockTimestamp_lt: $end${rangeIndex} }
+		  where: { blockTimestamp_gte: $start${rangeIndex}, blockTimestamp_lte: $end${rangeIndex} }
 		) {
 		  pool
 		  amount
 		  blockNumber
+		  totalStaked
 		}
 	  `;
 	});
@@ -186,7 +188,7 @@ export const fetchConservativeStakingTotalDistribution = async (ranges: DateRang
 	// Dynamically create the variables
 	ranges.forEach((range, index) => {
 		const rangeIndex = index + 1;
-		variables[`start${rangeIndex}`] = range.start;
+		variables[`start${rangeIndex}`] = range.start + 1 * 25;
 		variables[`end${rangeIndex}`] = range.end;
 	});
 
@@ -216,7 +218,8 @@ const mapAndSumResponse = (response: ProfitConservativeDistributionResponse['dat
 
 		// Map each category to the desired structure
 		return {
-			label: ranges[index].end, // Placeholder for the label
+			label: ranges[index].start, // Placeholder for the label
+			totalStaked: distribution.length ? valueToNumber(distribution[distribution.length - 1].totalStaked) : 0,
 
 			value: valueToNumber(totalAmount), // Convert to a regular number for the chart
 		};

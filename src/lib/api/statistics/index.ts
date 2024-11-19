@@ -144,7 +144,7 @@ export const fetchRevenueStatisticsTotalCurrent = async (config: Config): Promis
 		],
 	});
 
-	const conservativeTotalRevenue = valueToNumber(conservativeResults[0].result as bigint) - valueToNumber(conservativeResults[1].result as bigint);
+	const conservativeTotalRevenue = valueToNumber(conservativeResults[0].result as bigint) + valueToNumber(conservativeResults[1].result as bigint);
 	const dynamicTotalRevenue =
 		valueToNumber(dynamicResults[0].result as bigint) + valueToNumber(dynamicResults[1].result as bigint) - valueToNumber(dynamicResults[2].result as bigint);
 	if (!conservativeTotalRevenue || !dynamicTotalRevenue) return defaultTotalRevenueStatistics;
