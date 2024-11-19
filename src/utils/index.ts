@@ -33,7 +33,7 @@ export const getDynamicCycles = () => {
 		return { start, end };
 	});
 	// Filter out cycles that have a start time after the current cycle's start
-	const validCycles = transformedCycles.filter((cycle) => cycle.start < cycleStart / 1000);
+	const validCycles = transformedCycles;
 
 	return {
 		validCycles,

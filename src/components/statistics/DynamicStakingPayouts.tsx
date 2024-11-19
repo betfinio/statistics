@@ -53,22 +53,26 @@ export const DynamicStakingPayouts = () => {
 };
 
 // Custom Tooltip Component
-const Tooltip = (props: BarTooltipProps<{ label: number; value: number }>) => {
+const Tooltip = (props: BarTooltipProps<{ label: number; value: number; totalStaked: number }>) => {
 	const { t } = useTranslation('staking');
 	const { color, data } = props;
 
 	return (
 		<div className="flex flex-col gap-1 bg-card rounded-lg px-2 py-1 text-sm">
 			{/* Display the formatted date */}
-			<div className="text-xs">{DateTime.fromSeconds(data.label).toFormat('dd.MM')}</div>
 			<div className="flex justify-between items-center gap-2">
 				<div className={cx(' ')} style={{ color: color }}>
 					{t('statistics.dynamic')}
 				</div>
+				<div className="text-xs">{DateTime.fromSeconds(data.label).toFormat('dd.MM')}</div>
+			</div>
+
+			<div className="flex justify-between items-center gap-2">
 				<div className="text-xs flex gap-1 items-center">
 					{data.value.toLocaleString()}
 					<Bet className={'w-3 h-3 text-accent-secondary-foreground'} />
 				</div>
+				<div className="text-xs flex gap-1 items-center">{((data.value / data.totalStaked) * 100).toFixed(3)}%</div>
 			</div>
 		</div>
 	);

@@ -40,6 +40,7 @@ query GetTotalDynamicDistributions($start: BigInt!, $end: BigInt!) {
 		pool
 		amount
 		blockNumber
+		totalStaked
 	}
 }
 
@@ -48,6 +49,7 @@ query GetTotalConservativeDistributions($start: BigInt!, $end: BigInt!) {
 		pool
 		amount
 		blockNumber
+		totalStaked
 	}
 }
 query GetTradingVolume($pool: ID!, $first: Int!) {
