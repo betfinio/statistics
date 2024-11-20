@@ -40,3 +40,32 @@ export const getDynamicCycles = () => {
 		cycleStart,
 	};
 };
+
+const CYCLE_LENGTH_MS = 1000 * 60 * 60 * 24 * 7; // 7 days in milliseconds
+const OFFSET_MS = 1000 * 60 * 60 * 36; // 36 hours in milliseconds
+
+// Calculate the current cycle ID
+const cycleId = Math.floor((Date.now() - OFFSET_MS) / CYCLE_LENGTH_MS);
+
+// Calculate the start timestamp for the current cycle
+const cycleStart = cycleId * CYCLE_LENGTH_MS + OFFSET_MS;
+
+// Function to get the previous N cycles (backwards)
+export const getConservativeCyclesBack = (numCycles: number) => {
+	const cycles = [];
+	let currentCycleStart = cycleStart;
+
+	for (let i = 0; i < numCycles; i++) {
+		// Calculate start and end of the current cycle
+		const cycleEnd = currentCycleStart + CYCLE_LENGTH_MS; // End of current cycle is start of the next cycle
+		cycles.push({
+			start: currentCycleStart / 1000,
+			end: cycleEnd / 1000,
+		});
+
+		// Move to the previous cycle (subtract one cycle length)
+		currentCycleStart -= CYCLE_LENGTH_MS;
+	}
+
+	return cycles.reverse(); // Reverse to get cycles in chronological order
+};
