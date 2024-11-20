@@ -1,152 +1,167 @@
-import { useRevenueStatisticsCurrent, useStakingStatistics } from '@/src/lib/query/statistics';
+import { useGetTotalConservativeDistribution, useGetTotalDynamicDistribution } from '@/src/lib/query/statistics';
+import { getConservativeCyclesBack, getDynamicCycles } from '@/src/utils';
 import { Bet } from '@betfinio/ui/dist/icons';
-import { ResponsiveLine, type Serie, type SliceTooltipProps } from '@nivo/line';
+import { type BarTooltipProps, ResponsiveBar } from '@nivo/bar';
 
-import type { Stat, Timeframe } from 'betfinio_app/lib/types';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'betfinio_app/select';
-import cx from 'clsx';
+import { cn } from 'betfinio_app/lib/utils';
 import { DateTime } from 'luxon';
 import millify from 'millify';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+export interface IDataPoint {
+	id: string;
+	label: string;
+	value: number;
+	color: string;
+	textColor: string;
+	legendColor: string;
+}
+const cycles28Back = getConservativeCyclesBack(28);
+const { validCycles } = getDynamicCycles();
+
 const Revenues = () => {
 	const { t } = useTranslation('staking');
-	const [timeframe, setTimeframe] = useState<Timeframe>('day');
-	const { data: statistics = [] } = useStakingStatistics(timeframe);
-	const { data: currentStatistic } = useRevenueStatisticsCurrent();
+	const { data: totalDistribution = [] } = useGetTotalConservativeDistribution(cycles28Back);
+	const { data: totalDynamicDistribution = [] } = useGetTotalDynamicDistribution(validCycles);
 
-	const conservativeData = useMemo(() => {
-		if (!currentStatistic) return [];
-		const calculated = statistics.map((item) => {
-			return {
-				x: item.timestamp,
-				y: item.conservativeTotalRevenue,
-			};
-		});
+	const [showDynamic, setShowDynamic] = useState(true);
+	const [showConservative, setShowConservative] = useState(true);
 
-		calculated.push({ x: currentStatistic.timestamp, y: currentStatistic.conservativeTotalRevenue });
-		return calculated;
-	}, [statistics, currentStatistic]);
-
-	const dynamicData = useMemo(() => {
-		if (!currentStatistic) return [];
-		const calculated = statistics.map((item) => {
-			return {
-				x: item.timestamp,
-				y: item.dynamicTotalRevenue,
-			};
-		});
-
-		calculated.push({ x: currentStatistic.timestamp, y: currentStatistic.dynamicTotalRevenue });
-		return calculated;
-	}, [statistics, currentStatistic]);
-
-	const data: Serie[] = [
-		{
-			id: t('statistics.conservative'),
+	const formatedData = useMemo(() => {
+		const conservative = totalDistribution.map((item) => ({
+			label: item.label,
+			value: item.value,
+			totalStaked: item.totalStaked,
+			percentage: (item.value / item.totalStaked) * 100,
+			type: 'conservative' as const,
 			color: 'hsl(var(--chart-1))',
-			data: conservativeData,
-		},
-		{
-			id: t('statistics.dynamic'),
+		}));
+		const dynamic = totalDynamicDistribution.map((item) => ({
+			label: item.label,
+			value: item.value,
+			totalStaked: item.totalStaked,
+			percentage: (item.value / item.totalStaked) * 100,
+			type: 'dynamic' as const,
 			color: 'hsl(var(--chart-2))',
-			data: dynamicData,
-		},
-	];
+		}));
 
-	const handleChange = (val: Timeframe) => {
-		setTimeframe(val);
-	};
+		return [...(showConservative ? conservative : []), ...(showDynamic ? dynamic : [])].sort((a, b) => a.label - b.label);
+	}, [totalDistribution, totalDynamicDistribution, showDynamic, showConservative]);
+
 	return (
-		<div className={'border border-border rounded-lg p-2 w-full h-[400px] pb-[40px]'}>
-			<div className={'text-lg flex flex-row justify-end'}>
-				{/* <div className={'px-1'}>{t('statistics.totalRevenues')}</div> */}
-				<Select defaultValue={'day'} onValueChange={handleChange}>
-					<SelectTrigger className={'max-w-[100px]'}>
-						<SelectValue placeholder="Timeframe" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="hour">1 {t('hour')}</SelectItem>
-						<SelectItem value="day">1 {t('day')}</SelectItem>
-						<SelectItem value="week">1 {t('week')}</SelectItem>
-					</SelectContent>
-				</Select>
+		<div className={'border border-border rounded-lg w-full p-2'}>
+			<div className={' aspect-video h-[400px] w-full'}>
+				<ResponsiveBar
+					data={formatedData}
+					keys={['percentage']}
+					indexBy="label"
+					enableGridX={false}
+					enableGridY={false}
+					borderRadius={2}
+					margin={{ top: 20, right: 30, bottom: 40, left: 50 }}
+					padding={0.3}
+					axisBottom={{
+						format: (value) => {
+							const dataItem = formatedData.find((item) => item.label === value);
+							if (dataItem) {
+								// Add conditional logic here
+								return dataItem.type === 'dynamic' ? DateTime.fromSeconds(value).toFormat('dd.MM') : '';
+							}
+							return '';
+						},
+						tickRotation: 45,
+					}}
+					axisLeft={{
+						format: (value) => millify(value, { precision: 2 }),
+					}}
+					tooltip={Tooltip}
+					labelSkipWidth={12}
+					labelSkipHeight={12}
+					valueFormat={() => ''}
+					colors={(d) => d.data.color}
+				/>
 			</div>
-			<ResponsiveLine
-				key={timeframe}
-				data={data}
-				margin={{ top: 20, right: 30, bottom: 50, left: 50 }}
-				curve={'monotoneX'}
-				colors={{ datum: 'color' }}
-				enableGridX={false}
-				enableGridY={false}
-				axisTop={null}
-				isInteractive={true}
-				axisRight={null}
-				axisLeft={{
-					format: (value) => millify(value, { precision: 2 }),
-				}}
-				axisBottom={{
-					format: (value) => DateTime.fromSeconds(value).toFormat(timeframe === 'hour' ? 'HH:mm' : 'dd.MM'),
-					tickRotation: 45,
-				}}
-				yScale={{
-					// min, max,
-					type: 'linear',
-				}}
-				animate={true}
-				enableTouchCrosshair={true}
-				enableSlices={'x'}
-				sliceTooltip={Tooltip}
-				useMesh={true}
-				pointSize={0}
-				legends={[
-					{
-						anchor: 'bottom',
-						direction: 'row',
-						translateY: 50,
-						itemsSpacing: 0,
-						itemDirection: 'left-to-right',
-						itemWidth: 80,
-						itemHeight: 20,
-						itemOpacity: 0.75,
-						toggleSerie: true,
-						symbolSize: 12,
-						symbolShape: 'circle',
-						symbolBorderColor: 'rgba(255, 255, 255, .5)',
-						effects: [
-							{
-								on: 'hover',
-								style: {
-									itemBackground: 'rgba(0, 0, 0, .03)',
-									itemOpacity: 1,
-								},
-							},
-						],
-					},
-				]}
-			/>
+			<div className="flex justify-center gap-4 text-xs">
+				<div
+					className="flex items-center gap-1 hover:cursor-pointer "
+					onClick={() => {
+						setShowConservative(!showConservative);
+					}}
+				>
+					<span
+						className={cn('w-3 h-3 flex rounded-full', {
+							'bg-[hsl(var(--chart-1))]': showConservative,
+							'bg-[hsl(var(--chart-1))]/50': !showConservative,
+						})}
+					/>
+					<span
+						className={cn({
+							'text-foreground': showConservative,
+							'text-tertiary-foreground': !showConservative,
+						})}
+					>
+						{t('statistics.conservative')}
+					</span>
+				</div>
+				<div
+					className="flex items-center gap-1 hover:cursor-pointer"
+					onClick={() => {
+						setShowDynamic(!showDynamic);
+					}}
+				>
+					<span
+						className={cn('w-3 h-3 flex rounded-full', {
+							'bg-[hsl(var(--chart-2))]': showDynamic,
+							'bg-[hsl(var(--chart-2))]/50': !showDynamic,
+						})}
+					/>
+					<span
+						className={cn({
+							'text-foreground': showDynamic,
+							'text-tertiary-foreground': !showDynamic,
+						})}
+					>
+						{t('statistics.dynamic')}
+					</span>
+				</div>
+			</div>
 		</div>
 	);
 };
 
 export default Revenues;
 
-const Tooltip = ({ slice }: SliceTooltipProps) => {
+// Custom Tooltip Component
+const Tooltip = (
+	props: BarTooltipProps<{
+		label: number;
+		value: number;
+		totalStaked: number;
+		color: string;
+		type: 'conservative' | 'dynamic';
+	}>,
+) => {
+	const { t } = useTranslation('staking');
+
+	const { color, data } = props;
+
 	return (
-		<div className={'flex flex-col gap-1 bg-card rounded-lg  px-2 py-1 text-sm '}>
-			<div className={'text-xs'}>{DateTime.fromSeconds(Number(slice.points[0].data.x)).toFormat('dd.MM HH:mm')}</div>
-			{slice.points.map((point, id) => (
-				<div className={'flex flex-row items-center  justify-between gap-3'} key={id}>
-					<div className={cx('opacity-50')} style={{ color: point.color }}>
-						{point.serieId}
-					</div>
-					<div className={'flex flex-row items-center gap-1'}>
-						{point.data.y.toLocaleString()} <Bet className={'w-3 h-3 text-accent-secondary-foreground'} />
-					</div>
+		<div className="flex flex-col gap-1 bg-card rounded-lg px-2 py-1 text-sm">
+			{/* Display the formatted date */}
+			<div className="flex items-center justify-between gap-2">
+				<div className={cn(' ')} style={{ color: color }}>
+					{t(`statistics.${data.type}`)}
 				</div>
-			))}
+				<div className="text-xs">{DateTime.fromSeconds(data.label).toFormat('dd.MM')}</div>
+			</div>
+			<div className="flex justify-between items-center gap-2">
+				<div className="text-xs flex gap-1 items-center">
+					{data.value.toLocaleString()}
+					<Bet className={'w-3 h-3 text-accent-secondary-foreground'} />
+				</div>
+				<div className="text-xs flex gap-1 items-center">{((data.value / data.totalStaked) * 100).toFixed(3)}%</div>
+			</div>
 		</div>
 	);
 };
