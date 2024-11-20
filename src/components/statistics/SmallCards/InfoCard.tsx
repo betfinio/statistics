@@ -11,13 +11,25 @@ import type { FC } from 'react';
 interface IInfoCardProps {
 	header: string;
 	title: string | number | bigint;
-	title2?: bigint;
+	titlePostFix?: string;
+	postfix?: string;
+	withIcon?: boolean;
 	subtitle?: string;
 	tooltipContent: string[];
 	titleType?: 'currency' | 'user' | 'currencyPair';
 	Icon?: FC<IconProps>;
 }
-export const InfoCard: FC<IInfoCardProps> = ({ header, title, title2, subtitle, tooltipContent, titleType, Icon = Referer }) => {
+export const InfoCard: FC<IInfoCardProps> = ({
+	header,
+	title,
+	titlePostFix,
+	postfix,
+	withIcon = true,
+	subtitle,
+	tooltipContent,
+	titleType,
+	Icon = Referer,
+}) => {
 	return (
 		<TooltipProvider delayDuration={0}>
 			<Tooltip open={false}>
@@ -26,19 +38,9 @@ export const InfoCard: FC<IInfoCardProps> = ({ header, title, title2, subtitle, 
 					<Icon className={'w-10 h-10 text-accent-secondary-foreground'} />
 					<div className={cx(' flex-grow text-base lg:text-lg font-semibold text-center flex flex-wrap items-center justify-center gap-1 text-foreground')}>
 						{!titleType && <span>{title.toString()}</span>}
-						{titleType === 'currency' && <BetValue value={title as bigint} withIcon />}
-						{titleType === 'currencyPair' && (
-							<>
-								<BetValue value={title as bigint} withIcon />
+						{titleType === 'currency' && <BetValue value={title as bigint} withIcon={withIcon} postfix={postfix} />}
+						{titlePostFix && <span>{titlePostFix}</span>}
 
-								{
-									<span className="hidden sm:flex gap-1 pl-1">
-										+
-										<BetValue value={valueToNumber(title2, 6)} postfix="USD" />
-									</span>
-								}
-							</>
-						)}
 						{titleType === 'user' && (
 							<>
 								{title}

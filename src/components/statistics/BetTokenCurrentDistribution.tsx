@@ -3,7 +3,7 @@ import { Bet } from '@betfinio/ui/dist/icons';
 import { type PieTooltipProps, ResponsivePie } from '@nivo/pie';
 import { cn, useMediaQuery } from 'betfinio_app/lib/utils';
 import millify from 'millify';
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface IDataPoint {
@@ -48,8 +48,8 @@ export const BetTokenCurrentDistribution = () => {
 				legendColor: 'hsl(var(--chart-5))',
 			},
 			{
-				id: 'lockedLiquidity',
-				label: t('lockedLiquidity'),
+				id: 'liquidity',
+				label: t('liquidity'),
 				value: 3,
 				color: 'hsl(var(--chart-1))',
 				textColor: 'hsl(var(--foreground))',
