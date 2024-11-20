@@ -65,7 +65,6 @@ const Revenues = () => {
 						format: (value) => {
 							const dataItem = formatedData.find((item) => item.label === value);
 							if (dataItem) {
-								// Add conditional logic here
 								return dataItem.type === 'dynamic' ? DateTime.fromSeconds(value).toFormat('dd.MM') : '';
 							}
 							return '';
