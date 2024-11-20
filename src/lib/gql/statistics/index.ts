@@ -23,8 +23,10 @@ export const mapStakingStatistics = (item: GetStakingStatsCycleQuery['totalStaki
 		timestamp: new Date(+item.timestamp * 1000).getTime() / 1000,
 		conservativeTotalStakers: +item.conservativeTotalStakers,
 		dynamicTotalStakers: +item.dynamicTotalStakers,
-		dynamicTotalRevenue: (valueToNumber(item.dynamicTotalRevenues) / valueToNumber(item.dynamicTotalStaking)) * 100,
-		conservativeTotalRevenue: (valueToNumber(item.conservativeTotalRevenues) / valueToNumber(item.conservativeTotalStaking)) * 100,
+		dynamicTotalRevenue: valueToNumber(item.dynamicTotalRevenues),
+		conservativeTotalRevenue: valueToNumber(item.conservativeTotalRevenues),
+		dynamicTotalRevenuePercentage: (valueToNumber(item.dynamicTotalRevenues) / valueToNumber(item.dynamicTotalStaking)) * 100,
+		conservativeTotalRevenuePercentage: (valueToNumber(item.conservativeTotalRevenues) / valueToNumber(item.conservativeTotalStaking)) * 100,
 	};
 };
 
