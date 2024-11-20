@@ -43,7 +43,7 @@ export const BetTokenEmissionChart = () => {
 			id: 'affilatePool',
 			label: t('affilatePool'),
 			value: 381111111111,
-			color: 'hsl(var(--chart-1))',
+			color: 'hsl(var(--chart-2))',
 			legendColor: 'hsl(var(--chart-8))',
 		},
 		{

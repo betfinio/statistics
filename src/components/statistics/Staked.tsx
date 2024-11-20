@@ -93,8 +93,9 @@ const Staked = () => {
 					tickRotation: 45,
 				}}
 				yScale={{
-					// min, max,
 					type: 'linear',
+					min: 'auto', // Can be a specific value, e.g., 50
+					max: 'auto', // Can be a specific value, e.g., 100
 				}}
 				animate={true}
 				enableTouchCrosshair={true}

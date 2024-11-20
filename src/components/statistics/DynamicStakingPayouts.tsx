@@ -15,24 +15,13 @@ export const DynamicStakingPayouts = () => {
 
 	return (
 		<div className={'border border-border rounded-lg aspect-video h-[400px] w-full p-2'}>
-			<div className={'text-lg flex flex-row justify-end'}>
-				{/* <div className={"px-1"}>{t("dynamicStakingPayouts")}</div> */}
-				<Select defaultValue={'cycle'}>
-					<SelectTrigger className={'max-w-[100px]'}>
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="cycle">1 {t('cycle')}</SelectItem>
-					</SelectContent>
-				</Select>
-			</div>
 			<ResponsiveBar
 				data={totalDistribution ?? []}
 				keys={['value']}
 				indexBy="label"
 				enableGridX={false}
 				enableGridY={false}
-				borderRadius={8}
+				borderRadius={2}
 				margin={{ top: 20, right: 30, bottom: 70, left: 50 }}
 				padding={0.3}
 				axisBottom={{

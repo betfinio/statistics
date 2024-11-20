@@ -94,9 +94,9 @@ const Stakers = () => {
 					tickRotation: 45,
 				}}
 				yScale={{
-					//   min,
-					//   max,
 					type: 'linear',
+					min: 'auto',
+					max: 'auto',
 				}}
 				animate={true}
 				enableTouchCrosshair={true}
