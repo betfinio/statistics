@@ -31,7 +31,7 @@
 		"tradingVolumeTooltip": "30D trading volume tooltip",
 		"free": "Free",
 		"inStaking": "In staking",
-		"lockedLiquidity": "Locked liquidity",
+		"liquidity": "Liquidity",
 		"initialTokenomy": "Initial Tokenomy",
 		"currentDistribution": "Current Distribution",
 		"total": "Total",
