@@ -116,7 +116,7 @@ export const BetTokenCurrentDistribution = () => {
 						borderWidth={2}
 						colors={{ datum: 'data.color' }}
 						arcLinkLabel={(d) => `${d.label}`}
-						arcLinkLabelsSkipAngle={10}
+						arcLinkLabelsSkipAngle={0}
 						arcLinkLabelsTextColor="hsl(var(--foreground))"
 						arcLinkLabelsThickness={2}
 						arcLinkLabelsColor={{ from: 'color' }}
