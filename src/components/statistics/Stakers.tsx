@@ -65,7 +65,7 @@ const Stakers = () => {
 		<div className={'border border-border rounded-lg aspect-video p-2'}>
 			<div className={'text-lg flex flex-row justify-between'}>
 				<div className={'px-1'}>{t('statistics.totalStakers')}</div>
-				<Select defaultValue={'day'} onValueChange={handleChange}>
+				<Select defaultValue={'week'} onValueChange={handleChange}>
 					<SelectTrigger className={'max-w-[100px]'}>
 						<SelectValue placeholder="Timeframe" />
 					</SelectTrigger>
