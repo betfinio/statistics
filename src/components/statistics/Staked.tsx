@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 const Staked = () => {
 	const { t } = useTranslation('staking');
-	const [timeframe, setTimeframe] = useState<Timeframe>('day');
+	const [timeframe, setTimeframe] = useState<Timeframe>('week');
 
 	const { data: statistics = [] } = useStakingStatistics(timeframe);
 	const { data: currentStatistic } = useStakedStatisticsCurrent();
