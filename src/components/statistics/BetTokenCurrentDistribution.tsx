@@ -67,7 +67,7 @@ export const BetTokenCurrentDistribution = () => {
 				id: 'affilatePool',
 				label: t('affilatePool'),
 				value: 4,
-				color: 'hsl(var(--chart-1))',
+				color: 'hsl(var(--chart-2))',
 				textColor: 'hsl(var(--foreground))',
 				legendColor: 'hsl(var(--chart-8))',
 			},
