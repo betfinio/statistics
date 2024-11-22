@@ -18,28 +18,22 @@ const Staked = () => {
 	const { data: currentStatistic } = useStakedStatisticsCurrent();
 	const conservativeData = useMemo(() => {
 		if (!currentStatistic) return [];
-		const calculated = statistics.map((item) => {
+		return statistics.map((item) => {
 			return {
 				x: item.timestamp,
 				y: item.conservativeTotalStaked,
 			};
 		});
-
-		calculated.push({ x: currentStatistic.timestamp, y: currentStatistic.conservativeTotalStaking });
-		return calculated;
 	}, [statistics, currentStatistic]);
 
 	const dynamicData = useMemo(() => {
 		if (!currentStatistic) return [];
-		const calculated = statistics.map((item) => {
+		return statistics.map((item) => {
 			return {
 				x: item.timestamp,
 				y: item.dynamicTotalStaked,
 			};
 		});
-
-		calculated.push({ x: currentStatistic.timestamp, y: currentStatistic.dynamicTotalStaking });
-		return calculated;
 	}, [statistics, currentStatistic]);
 
 	const data: Serie[] = [
