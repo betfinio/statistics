@@ -16,7 +16,7 @@ export const FreeBetCirculation: React.FC = () => {
 
 	return (
 		<div className={cn({ blur: isLoading })}>
-			<InfoCard titleType="currency" title={result} header={t('freeBetCircle')} tooltipContent={[t('freeBetCircleTooltip')]} />
+			<InfoCard titleType="currency" title={result} header={t('circulatingSupply')} tooltipContent={[t('circulatingSupplyTooltip')]} />
 		</div>
 	);
 };
