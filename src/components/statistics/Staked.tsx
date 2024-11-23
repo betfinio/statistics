@@ -14,9 +14,12 @@ const Staked = () => {
 	const { t } = useTranslation('staking');
 	const [timeframe, setTimeframe] = useState<Timeframe>('week');
 
-	const { data: statistics = [] } = useStakingStatistics(timeframe);
-	const { data: currentStatistic } = useStakedStatisticsCurrent();
+	const { data: statistics = [], isLoading: isStatisticsLoading } = useStakingStatistics(timeframe);
+	const { data: currentStatistic, isLoading: isCurrentStatisticsLoading } = useStakedStatisticsCurrent();
 	const conservativeData = useMemo(() => {
+		if (isStatisticsLoading || isCurrentStatisticsLoading) {
+			return [];
+		}
 		if (!currentStatistic) return [];
 		return statistics.map((item) => {
 			return {
@@ -27,6 +30,9 @@ const Staked = () => {
 	}, [statistics, currentStatistic]);
 
 	const dynamicData = useMemo(() => {
+		if (isStatisticsLoading || isCurrentStatisticsLoading) {
+			return [];
+		}
 		if (!currentStatistic) return [];
 		return statistics.map((item) => {
 			return {
