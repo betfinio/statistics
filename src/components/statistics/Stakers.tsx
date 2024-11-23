@@ -13,10 +13,13 @@ import { useTranslation } from 'react-i18next';
 const Stakers = () => {
 	const { t } = useTranslation('staking');
 	const [timeframe, setTimeframe] = useState<Timeframe>('week');
-	const { data: statistics = [] } = useStakingStatistics(timeframe);
-	const { data: currentStatistic } = useStakersStatisticsCurrent();
+	const { data: statistics = [], isLoading: isStatisticsLoading } = useStakingStatistics(timeframe);
+	const { data: currentStatistic, isLoading: isCurrentStatisticsLoading } = useStakersStatisticsCurrent();
 
 	const conservativeData = useMemo(() => {
+		if (isStatisticsLoading || isCurrentStatisticsLoading) {
+			return [];
+		}
 		if (!currentStatistic) return [];
 		const calculated = statistics.map((item) => {
 			return {
@@ -31,6 +34,9 @@ const Stakers = () => {
 	}, [statistics, currentStatistic]);
 
 	const dynamicData = useMemo(() => {
+		if (isStatisticsLoading || isCurrentStatisticsLoading) {
+			return [];
+		}
 		if (!currentStatistic) return [];
 
 		const calculated = statistics.map((item) => {
