@@ -8,11 +8,15 @@
 		"strict": true,
 		"skipLibCheck": true,
 		"isolatedModules": true,
+		"declaration": false,
 		"rootDir": "./",
-		"resolveJsonModule": true,
 		"moduleResolution": "bundler",
 		"useDefineForClassFields": true,
 		"allowImportingTsExtensions": true,
+		"baseUrl": ".",
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
 		"paths": {
 			"*": ["./@mf-types/*"],
 			"@/*": ["./*"]

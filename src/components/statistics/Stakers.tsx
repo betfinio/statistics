@@ -1,9 +1,8 @@
 import { useStakersStatisticsCurrent, useStakingStatistics } from '@/src/lib/query/statistics';
+import type { Timeframe } from '@/src/lib/types';
+import { cn } from '@betfinio/components';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@betfinio/components/ui';
 import { ResponsiveLine, type Serie, type SliceTooltipProps } from '@nivo/line';
-
-import type { Timeframe } from 'betfinio_app/lib/types';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'betfinio_app/select';
-import cx from 'clsx';
 import { UserIcon } from 'lucide-react';
 import { DateTime } from 'luxon';
 import millify from 'millify';
@@ -141,7 +140,7 @@ const Tooltip = ({ slice }: SliceTooltipProps) => {
 			<div className={'text-xs'}>{DateTime.fromSeconds(Number(slice.points[0].data.x)).toFormat('dd.MM HH:mm')}</div>
 			{slice.points.map((point, id) => (
 				<div className={'flex flex-row items-center  justify-between gap-3'} key={id}>
-					<div className={cx('opacity-50')} style={{ color: point.color }}>
+					<div className={cn('opacity-50')} style={{ color: point.color }}>
 						{point.serieId}
 					</div>
 					<div className={'flex flex-row items-center gap-1'}>

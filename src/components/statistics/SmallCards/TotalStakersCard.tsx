@@ -1,7 +1,7 @@
 import { useStakersStatisticsCurrent } from '@/src/lib/query/statistics';
 import { InfoCard } from './InfoCard';
 
-import cx from 'clsx';
+import { cn } from '@betfinio/components';
 import { useTranslation } from 'react-i18next';
 export const TotalStakersCard = () => {
 	const { data, isLoading } = useStakersStatisticsCurrent();
@@ -9,7 +9,7 @@ export const TotalStakersCard = () => {
 
 	return (
 		<div
-			className={cx({
+			className={cn({
 				blur: isLoading,
 			})}
 		>

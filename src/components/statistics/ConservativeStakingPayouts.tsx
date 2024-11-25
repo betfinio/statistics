@@ -1,9 +1,8 @@
 import { useGetTotalConservativeDistribution } from '@/src/lib/query/statistics';
 import { getConservativeCyclesBack } from '@/src/utils';
-import { Bet } from '@betfinio/ui/dist/icons';
+import { cn } from '@betfinio/components';
+import { Bet } from '@betfinio/components/icons';
 import { type BarTooltipProps, ResponsiveBar } from '@nivo/bar';
-import { useMediaQuery } from 'betfinio_app/lib/utils';
-import cx from 'clsx';
 import { DateTime } from 'luxon';
 import millify from 'millify';
 import { type FC, useMemo } from 'react';
@@ -55,7 +54,7 @@ const Tooltip = (props: BarTooltipProps<{ label: number; value: number; totalSta
 		<div className="flex flex-col gap-1 bg-card rounded-lg px-2 py-1 text-sm">
 			{/* Display the formatted date */}
 			<div className="flex items-center justify-between gap-2">
-				<div className={cx(' ')} style={{ color: color }}>
+				<div className={cn()} style={{ color: color }}>
 					{t('statistics.conservative')}
 				</div>
 				<div className="text-xs">{DateTime.fromSeconds(data.label).toFormat('dd.MM')}</div>
@@ -63,7 +62,7 @@ const Tooltip = (props: BarTooltipProps<{ label: number; value: number; totalSta
 			<div className="flex justify-between items-center gap-2">
 				<div className="text-xs flex gap-1 items-center">
 					{data.value.toLocaleString()}
-					<Bet className={'w-3 h-3 text-accent-secondary-foreground'} />
+					<Bet className={'w-3 h-3 text-secondary-foreground'} />
 				</div>
 				<div className="text-xs flex gap-1 items-center">{((data.value / data.totalStaked) * 100).toFixed(3)}%</div>
 			</div>

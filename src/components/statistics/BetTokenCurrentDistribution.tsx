@@ -1,7 +1,8 @@
 import { useGetCurrentDistribution } from '@/src/lib/query/statistics';
-import { Bet } from '@betfinio/ui/dist/icons';
+import { cn } from '@betfinio/components';
+import { useMediaQuery } from '@betfinio/components/hooks';
+import { Bet } from '@betfinio/components/icons';
 import { type PieTooltipProps, ResponsivePie } from '@nivo/pie';
-import { cn, useMediaQuery } from 'betfinio_app/lib/utils';
 import millify from 'millify';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -187,7 +188,7 @@ const Tooltip = ({ datum }: PieTooltipProps<IDataPoint>) => {
 			{/* Label and value display */}
 			<div className="text-sm font-medium flex items-center gap-2">
 				<span className="">{datum.label || datum.id}:</span> {millify(datum.value)}
-				<Bet className={'w-3 h-3 text-accent-secondary-foreground'} />
+				<Bet className={'w-3 h-3 text-secondary-foreground'} />
 			</div>
 		</div>
 	);

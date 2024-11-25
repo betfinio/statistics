@@ -11,3 +11,5 @@ declare module '@tanstack/react-router' {
 interface ImportMetaEnv {
 	readonly PUBLIC_TOKEN_ADDRESS: Address;
 }
+
+declare module '@betfinio/components/ui';

@@ -1,5 +1,5 @@
 import { useGetTradingVolume } from '@/src/lib/query/statistics';
-import { cn } from 'betfinio_app/lib/utils';
+import { cn } from '@betfinio/components';
 import { useTranslation } from 'react-i18next';
 import { InfoCard } from './InfoCard';
 
