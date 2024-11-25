@@ -15,8 +15,6 @@
 		"allowImportingTsExtensions": true,
 		"baseUrl": ".",
 		"resolveJsonModule": true,
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
 		"paths": {
 			"*": ["./@mf-types/*"],
 			"@/*": ["./*"]
