@@ -21,6 +21,7 @@ export default defineConfig({
 	},
 	output: {
 		assetPrefix: process.env.PUBLIC_OUTPUT_URL,
+		minify: true,
 	},
 	plugins: [pluginReact()],
 	tools: {
