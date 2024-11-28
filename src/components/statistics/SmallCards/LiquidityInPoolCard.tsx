@@ -1,6 +1,6 @@
 import { useGetLiquidtyInPool } from '@/src/lib/query/statistics';
 import { valueToNumber } from '@betfinio/abi';
-import cx from 'clsx';
+import { cn } from '@betfinio/components';
 import { useTranslation } from 'react-i18next';
 import { InfoCard } from './InfoCard';
 
@@ -12,7 +12,7 @@ export const LiquidityInPoolCard: React.FC = () => {
 
 	return (
 		<div
-			className={cx({
+			className={cn({
 				blur: isLoading,
 			})}
 		>

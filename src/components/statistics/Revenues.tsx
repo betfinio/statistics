@@ -1,9 +1,8 @@
 import { useGetTotalConservativeDistribution, useGetTotalDynamicDistribution } from '@/src/lib/query/statistics';
 import { getConservativeCyclesBack, getDynamicCycles } from '@/src/utils';
-import { Bet } from '@betfinio/ui/dist/icons';
+import { cn } from '@betfinio/components';
+import { Bet } from '@betfinio/components/icons';
 import { type BarTooltipProps, ResponsiveBar } from '@nivo/bar';
-
-import { cn } from 'betfinio_app/lib/utils';
 import { DateTime } from 'luxon';
 import millify from 'millify';
 import { useMemo, useState } from 'react';
@@ -157,7 +156,7 @@ const Tooltip = (
 			<div className="flex justify-between items-center gap-2">
 				<div className="text-xs flex gap-1 items-center">
 					{data.value.toLocaleString()}
-					<Bet className={'w-3 h-3 text-accent-secondary-foreground'} />
+					<Bet className={'w-3 h-3 text-secondary-foreground'} />
 				</div>
 				<div className="text-xs flex gap-1 items-center">{((data.value / data.totalStaked) * 100).toFixed(3)}%</div>
 			</div>
