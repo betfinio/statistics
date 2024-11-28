@@ -7,7 +7,7 @@ import { initReactI18next } from 'react-i18next';
 import csStatistic from './translations/cs/staking.json';
 import enStatistic from './translations/en/staking.json';
 import ruStatistic from './translations/ru/staking.json';
-export const defaultNS = 'template';
+export const defaultNS = 'statistics';
 
 export const resources = {
 	en: {
