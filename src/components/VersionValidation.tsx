@@ -10,7 +10,7 @@ interface VersionValidationProps {
 	current: string;
 }
 export const VersionValidation: FC<VersionValidationProps> = ({ branch, repository, current }) => {
-	const { data: version } = useLatestVersion('statistics', branch);
+	const { data: version } = useLatestVersion(repository, branch);
 	useEffect(() => {
 		logger.warn('Latest version:', version);
 		logger.warn('Deployed version:', current);
