@@ -1,11 +1,9 @@
-import { valueToNumber } from '@betfinio/abi';
-import { Bet, type IconProps, Referer } from '@betfinio/ui/dist/icons';
-import { BetValue } from 'betfinio_app/BetValue';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'betfinio_app/tooltip';
-import cx from 'clsx';
+import { type IconProps, Referer } from '@betfinio/components/icons';
+import { cn } from '@betfinio/components/lib';
+import { BetValue } from '@betfinio/components/shared';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@betfinio/components/ui';
 import { motion } from 'framer-motion';
 import { UserIcon } from 'lucide-react';
-import millify from 'millify';
 import type { FC } from 'react';
 
 interface IInfoCardProps {
@@ -35,8 +33,8 @@ export const InfoCard: FC<IInfoCardProps> = ({
 			<Tooltip open={false}>
 				<motion.div className="relative border border-border py-3 flex flex-col  gap-2 h-full items-center bg-card rounded-lg">
 					<p className={'text-xs text-tertiary-foreground'}>{header}</p>
-					<Icon className={'w-10 h-10 text-accent-secondary-foreground'} />
-					<div className={cx(' flex-grow text-base lg:text-lg font-semibold text-center flex flex-wrap items-center justify-center gap-1 text-foreground')}>
+					<Icon className={'w-10 h-10 text-secondary-foreground'} />
+					<div className={cn(' flex-grow text-base lg:text-lg font-semibold text-center flex flex-wrap items-center justify-center gap-1 text-foreground')}>
 						{!titleType && <span>{title.toString()}</span>}
 						{titleType === 'currency' && <BetValue value={title as bigint} withIcon={withIcon} postfix={postfix} />}
 						{titlePostFix && <span>{titlePostFix}</span>}
@@ -44,7 +42,7 @@ export const InfoCard: FC<IInfoCardProps> = ({
 						{titleType === 'user' && (
 							<>
 								{title}
-								<UserIcon className={'w-4 h-4 text-accent-secondary-foreground'} />
+								<UserIcon className={'w-4 h-4 text-secondary-foreground'} />
 							</>
 						)}
 					</div>
@@ -52,7 +50,7 @@ export const InfoCard: FC<IInfoCardProps> = ({
 					{subtitle && <p className={'text-xs text-foreground'}>{subtitle}</p>}
 					<span
 						className={
-							'!hidden absolute right-4 top-2 border-2 text-tertiary-foreground border-current font-semibold text-xs w-[18px] h-[18px] flex items-center justify-center rounded-full'
+							'!hidden absolute right-4 top-2 border-2 text-tertiary-foreground border-current font-semibold text-xs w-[18px] h-[18px]  items-center justify-center rounded-full'
 						}
 					>
 						<TooltipTrigger>?</TooltipTrigger>

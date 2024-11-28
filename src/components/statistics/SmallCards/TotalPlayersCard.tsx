@@ -1,5 +1,5 @@
 import { useGetTotalPlayers } from '@/src/lib/query/statistics';
-import cx from 'clsx';
+import { cn } from '@betfinio/components';
 import { useTranslation } from 'react-i18next';
 import { InfoCard } from './InfoCard';
 
@@ -8,7 +8,7 @@ export const TotalPlayersCard = () => {
 	const { t } = useTranslation('staking', { keyPrefix: 'statistics' });
 	return (
 		<div
-			className={cx({
+			className={cn({
 				blur: isLoading,
 			})}
 		>

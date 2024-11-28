@@ -1,4 +1,4 @@
-# Template for betfin.io applications
+# statistics for betfin.io applications
 
 ## Setup
 

@@ -1,9 +1,8 @@
 import { useStakersStatisticsCurrent, useStakingStatistics } from '@/src/lib/query/statistics';
+import type { Timeframe } from '@/src/lib/types';
+import { cn } from '@betfinio/components';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@betfinio/components/ui';
 import { ResponsiveLine, type Serie, type SliceTooltipProps } from '@nivo/line';
-
-import type { Timeframe } from 'betfinio_app/lib/types';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'betfinio_app/select';
-import cx from 'clsx';
 import { UserIcon } from 'lucide-react';
 import { DateTime } from 'luxon';
 import millify from 'millify';
@@ -13,35 +12,34 @@ import { useTranslation } from 'react-i18next';
 const Stakers = () => {
 	const { t } = useTranslation('staking');
 	const [timeframe, setTimeframe] = useState<Timeframe>('week');
-	const { data: statistics = [] } = useStakingStatistics(timeframe);
-	const { data: currentStatistic } = useStakersStatisticsCurrent();
+	const { data: statistics = [], isLoading: isStatisticsLoading } = useStakingStatistics(timeframe);
+	const { data: currentStatistic, isLoading: isCurrentStatisticsLoading } = useStakersStatisticsCurrent();
 
 	const conservativeData = useMemo(() => {
+		if (isStatisticsLoading || isCurrentStatisticsLoading) {
+			return [];
+		}
 		if (!currentStatistic) return [];
-		const calculated = statistics.map((item) => {
+		return statistics.map((item) => {
 			return {
 				y: item.conservativeTotalStakers,
 				x: item.timestamp,
 			};
 		});
-
-		calculated.push({ x: currentStatistic.timestamp, y: currentStatistic?.conservativeTotalStakers });
-
-		return calculated;
 	}, [statistics, currentStatistic]);
 
 	const dynamicData = useMemo(() => {
+		if (isStatisticsLoading || isCurrentStatisticsLoading) {
+			return [];
+		}
 		if (!currentStatistic) return [];
 
-		const calculated = statistics.map((item) => {
+		return statistics.map((item) => {
 			return {
 				y: item.dynamicTotalStakers,
 				x: item.timestamp,
 			};
 		});
-		calculated.push({ x: currentStatistic.timestamp, y: currentStatistic.dynamicTotalStakers });
-
-		return calculated;
 	}, [statistics, currentStatistic]);
 
 	const data: Serie[] = [
@@ -142,7 +140,7 @@ const Tooltip = ({ slice }: SliceTooltipProps) => {
 			<div className={'text-xs'}>{DateTime.fromSeconds(Number(slice.points[0].data.x)).toFormat('dd.MM HH:mm')}</div>
 			{slice.points.map((point, id) => (
 				<div className={'flex flex-row items-center  justify-between gap-3'} key={id}>
-					<div className={cx('opacity-50')} style={{ color: point.color }}>
+					<div className={cn('opacity-50')} style={{ color: point.color }}>
 						{point.serieId}
 					</div>
 					<div className={'flex flex-row items-center gap-1'}>

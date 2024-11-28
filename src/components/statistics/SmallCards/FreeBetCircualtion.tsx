@@ -1,10 +1,8 @@
 import { useGetCurrentDistribution } from '@/src/lib/query/statistics';
-import { cn } from 'betfinio_app/lib/utils';
-import cx from 'clsx';
+import { cn } from '@betfinio/components/lib';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InfoCard } from './InfoCard';
-
 export const FreeBetCirculation: React.FC = () => {
 	const { data, isLoading } = useGetCurrentDistribution();
 	const { t } = useTranslation('staking', { keyPrefix: 'statistics' });

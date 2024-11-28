@@ -21,6 +21,7 @@ export default defineConfig({
 	},
 	output: {
 		assetPrefix: process.env.PUBLIC_OUTPUT_URL,
+		minify: true,
 	},
 	plugins: [pluginReact()],
 	tools: {
@@ -57,10 +58,6 @@ export default defineConfig({
 							singleton: true,
 							requiredVersion: dependencies['@tanstack/react-query'],
 						},
-						'lucide-react': {
-							singleton: true,
-							requiredVersion: dependencies['lucide-react'],
-						},
 						i18next: {
 							singleton: true,
 							requiredVersion: dependencies.i18next,
@@ -69,21 +66,9 @@ export default defineConfig({
 							singleton: true,
 							requiredVersion: dependencies['react-i18next'],
 						},
-						'tailwindcss-animate': {
-							singleton: true,
-							requiredVersion: dependencies['tailwindcss-animate'],
-						},
-						tailwindcss: {
-							singleton: true,
-							requiredVersion: dependencies.tailwindcss,
-						},
 						wagmi: {
 							singleton: true,
 							requiredVersion: dependencies.wagmi,
-						},
-						'i18next-browser-languagedetector': {
-							singleton: true,
-							requiredVersion: dependencies['i18next-browser-languagedetector'],
 						},
 					},
 				}),
